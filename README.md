@@ -67,10 +67,6 @@ Whether you're **sharing expertise**, **discovering new skills**, or **engaging 
 ### Database
 - MongoDB
 
-### Deployment
-- Vercel (Frontend)
-- Render / Railway / Localhost (Backend)
-
 ---
 
 ## 🚀 How to Run the Project
@@ -78,7 +74,6 @@ Whether you're **sharing expertise**, **discovering new skills**, or **engaging 
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/your-username/skillflow.git
-cd skillflow
 ```
 
 ### 2. Setup Backend (Spring Boot)
