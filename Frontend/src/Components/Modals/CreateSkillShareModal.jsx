@@ -75,3 +75,40 @@ const CreateSkillShareModal = () => {
     
     setUploadingMedia(true);
     
+    try {
+        // Process all files in parallel
+        const uploadPromises = files.map(async (file) => {
+          const fileType = file.type.split("/")[0];
+          
+          // Validate video duration if it's a video
+          if (fileType === "video") {
+            const isValid = await validateVideoDuration(file);
+            if (!isValid) {
+              alert(`Video "${file.name}" must be 30 seconds or less`);
+              return null;
+            }
+          }
+          
+          const url = await uploader.uploadFile(file, "posts");
+          
+          return {
+            uid: Date.now() + Math.random().toString(36).substring(2, 9),
+            url: url,
+            type: fileType,
+            name: file.name
+          };
+        });
+        
+        const results = await Promise.all(uploadPromises);
+        const validResults = results.filter(result => result !== null);
+        
+        setMediaFiles(prev => [...prev, ...validResults]);
+      } catch (error) {
+        console.error("Error uploading files:", error);
+      } finally {
+        setUploadingMedia(false);
+        // Reset the file input
+        e.target.value = null;
+      }
+    };
+  
