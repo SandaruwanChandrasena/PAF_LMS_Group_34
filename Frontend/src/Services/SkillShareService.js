@@ -20,39 +20,7 @@ const SkillShareService = {
     }
   },
 
-  // Get Skill Shares by user ID
-  getSkillSharesByUserId: async (userId) => {
-    const accessToken = localStorage.getItem("accessToken");
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-    try {
-      const response = await axios.get(`${API_URL}/${userId}`, config);
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching Skill Shares for user ${userId}:`, error);
-      throw error; // Throw the error to handle it in the component
-    }
-  },
 
-  // Create a new Skill Share
-  createSkillShare: async (SkillShareData) => {
-    const accessToken = localStorage.getItem("accessToken");
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-    try {
-      const response = await axios.post(API_URL, SkillShareData, config);
-      return response.data;
-    } catch (error) {
-      console.error("Error creating Skill Share:", error);
-      throw error; // Throw the error to handle it in the component
-    }
-  },
 
   // Update an existing Skill Share
   updateSkillShare: async (SkillShareId, updatedSkillShareData) => {
