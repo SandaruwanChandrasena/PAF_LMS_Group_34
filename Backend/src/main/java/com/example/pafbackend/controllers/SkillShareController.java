@@ -38,25 +38,5 @@ public class SkillShareController {
         return new ResponseEntity<>(savedSkillShare, HttpStatus.CREATED);
     }
     
-    @DeleteMapping("/{SkillShareId}")
-    public ResponseEntity<Void> deleteSkillShare(@PathVariable String SkillShareId) {
-        SkillShareRepository.deleteById(SkillShareId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-    
-    @PutMapping("/{SkillShareId}")
-    public ResponseEntity<SkillShare> updateSkillShare(@PathVariable String SkillShareId, @RequestBody SkillShare updatedSkillShare) {
-        // Check if the Skill Share with the given ID exists
-        if (!SkillShareRepository.existsById(SkillShareId)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        
-        // Set the ID of the updated Skill Share
-        updatedSkillShare.setId(SkillShareId);
-        
-        // Update the Skill Share
-        SkillShare savedSkillShare = SkillShareRepository.save(updatedSkillShare);
-        
-        return new ResponseEntity<>(savedSkillShare, HttpStatus.OK);
-    }
+
 }
