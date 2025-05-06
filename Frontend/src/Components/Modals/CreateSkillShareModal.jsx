@@ -172,4 +172,66 @@ const CreateSkillShareModal = () => {
         );
       };
     
+  // Custom drop zone instead of using Ant's Dragger
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (uploadingMedia || mediaFiles.length >= 3) return;
+    
+    const files = Array.from(e.dataTransfer.files);
+    
+    // Check if adding these files would exceed the limit
+    if (mediaFiles.length + files.length > 3) {
+      alert(`You can only upload up to 3 files in total. You've dropped ${files.length} files but can only add ${3 - mediaFiles.length} more.`);
+      return;
+    }
+    
+    setUploadingMedia(true);
+    
+    try {
+      // Process all files in parallel
+      const uploadPromises = files.map(async (file) => {
+        // Check if file is image or video
+        if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+          alert(`File "${file.name}" is not an image or video.`);
+          return null;
+        }
+        
+        const fileType = file.type.split("/")[0];
+        
+        // Validate video duration if it's a video
+        if (fileType === "video") {
+          const isValid = await validateVideoDuration(file);
+          if (!isValid) {
+            alert(`Video "${file.name}" must be 30 seconds or less`);
+            return null;
+          }
+        }
+        
+        const url = await uploader.uploadFile(file, "posts");
+        
+        return {
+          uid: Date.now() + Math.random().toString(36).substring(2, 9),
+          url: url,
+          type: fileType,
+          name: file.name
+        };
+      });
+      
+      const results = await Promise.all(uploadPromises);
+      const validResults = results.filter(result => result !== null);
+      
+      setMediaFiles(prev => [...prev, ...validResults]);
+    } catch (error) {
+      console.error("Error uploading files:", error);
+    } finally {
+      setUploadingMedia(false);
+    }
+  };
       
