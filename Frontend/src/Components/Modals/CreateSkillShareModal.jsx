@@ -1,0 +1,77 @@
+import React, { useState } from "react";
+import { Modal, Form, Input, Button, Select, Row, Col, Typography } from "antd";
+import { useSnapshot } from "valtio";
+import state from "../../Utils/Store";
+import SkillShareService from "../../Services/SkillShareService";
+import UploadFileService from "../../Services/UploadFileService";
+import { UploadOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
+
+const { Option } = Select;
+const { Title } = Typography;
+const uploader = new UploadFileService();
+
+// Theme colors from the first component
+const themeColors = {
+  primary: "#FF6B35", // Bright and inviting orange
+  secondary: "#FF8F1C", // Softer tangerine for a modern touch
+  accent: "#FF4500", // Fresh red-orange for highlights
+  background: "#FFF5E6", // Light orangeish-white for a clean look
+  surface: "#FFF0D9", // Soft light orange for surfaces
+  cardBg: "#FFFFFF", // White background for cards
+  textPrimary: "#1E3A5F", // Deep navy for readability
+  textSecondary: "#5A7184", // Muted blue-gray for secondary text
+  border: "rgba(0, 0, 0, 0.12)", // Subtle neutral border
+  hover: "#FF5733", // Slightly darker orange for hover effects
+  danger: "#FF4D4F", // Friendly red for warnings
+  success: "#28A745", // Balanced green for success messages
+  gradient: "linear-gradient(135deg, #FF6B35 0%, #FF8F1C 100%)", // Light, engaging orange gradient
+};
+
+const CreateSkillShareModal = () => {
+  const snap = useSnapshot(state);
+  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
+  const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [mediaFiles, setMediaFiles] = useState([]);
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      const values = await form.validateFields();
+
+      // Call the service to create the Skill Share
+      await SkillShareService.createSkillShare({
+        ...values,
+        userId: snap.currentUser?.uid,
+        mediaUrls: mediaFiles.map(file => file.url),
+        mediaTypes: mediaFiles.map(file => file.type)
+      });
+      state.SkillShares = await SkillShareService.getAllSkillShares();
+      
+      // Reset the form and close the modal on success
+      form.resetFields();
+      setMediaFiles([]);
+      state.createSkillShareOpened = false;
+    } catch (error) {
+      console.error("Error creating Skill Share:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Use a custom file input instead of Ant's Upload component to avoid duplication issues
+  const handleFileInputChange = async (e) => {
+    const files = Array.from(e.target.files);
+    
+    if (files.length === 0) return;
+    
+    // Check if adding these files would exceed the limit
+    if (mediaFiles.length + files.length > 3) {
+      alert(`You can only upload up to 3 files in total. You've selected ${files.length} files but can only add ${3 - mediaFiles.length} more.`);
+      // Reset the file input
+      e.target.value = null;
+      return;
+    }
+    
+    setUploadingMedia(true);
+    
