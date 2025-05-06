@@ -111,4 +111,65 @@ const CreateSkillShareModal = () => {
         e.target.value = null;
       }
     };
-  
+
+    const validateVideoDuration = (file) => {
+        return new Promise((resolve) => {
+          const video = document.createElement('video');
+          video.preload = 'metadata';
+          
+          video.onloadedmetadata = function() {
+            window.URL.revokeObjectURL(video.src);
+            resolve(video.duration <= 30);
+          };
+          
+          video.src = URL.createObjectURL(file);
+        });
+      };
+    
+      const removeMediaFile = (uid) => {
+        setMediaFiles(prev => prev.filter(file => file.uid !== uid));
+      };
+    
+      const renderMediaPreview = () => {
+        return (
+          <>
+            <p style={{ color: themeColors.textPrimary }}>Media Files ({mediaFiles.length}/3):</p>
+            <Row gutter={[16, 16]}>
+              {mediaFiles.map(file => (
+                <Col key={file.uid} span={8}>
+                  <div style={{ position: 'relative' }}>
+                    {file.type === 'image' ? (
+                      <img 
+                        src={file.url} 
+                        alt={file.name}
+                        style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8 }}
+                      />
+                    ) : (
+                      <video 
+                        src={file.url} 
+                        controls
+                        style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8 }}
+                      />
+                    )}
+                    <Button 
+                      type="text" 
+                      danger 
+                      icon={<DeleteOutlined />} 
+                      onClick={() => removeMediaFile(file.uid)}
+                      style={{ 
+                        position: 'absolute', 
+                        top: 0, 
+                        right: 0,
+                        background: 'rgba(255, 255, 255, 0.7)',
+                        borderRadius: 8
+                      }}
+                    />
+                  </div>
+                </Col>
+              ))}
+            </Row>
+          </>
+        );
+      };
+    
+      
