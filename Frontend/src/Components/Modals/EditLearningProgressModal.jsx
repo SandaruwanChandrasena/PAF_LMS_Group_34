@@ -42,6 +42,53 @@ const EditLearningProgressModal = () => {
     }
   }, [selectedPlan, form]);
 
+  const updateLearningProgress = async (values) => {
+    try {
+      setUpdateLoading(true);
+      // Prepare data for update
+      const body = {
+        ...values,
+        userId: snap.currentUser?.uid,
+        lastUpdated: new Date().toISOString().split("T")[0],
+        // Preserve existing values for fields we're not updating
+        category: selectedPlan.category,
+        completedItems: selectedPlan.completedItems,
+        totalItems: selectedPlan.totalItems,
+      };
+
+      await LearningProgressService.updateLearningProgress(
+        selectedPlan.id,
+        body
+      );
+
+      // Update the state without page refresh
+      const updatedPlans =
+        await LearningProgressService.getAllLearningProgresss();
+      state.LearningProgresss = updatedPlans;
+
+      // Update the selected plan in state with new values
+      const updatedPlan = updatedPlans.find(
+        (plan) => plan.id === selectedPlan.id
+      );
+      if (updatedPlan) {
+        state.selectedLearningProgress = updatedPlan;
+      }
+
+      // Close the modal
+      state.editLearningProgressOpened = false;
+
+      // Success message
+      message.success("Learning Progress updated successfully!");
+    } catch (error) {
+      console.error("Failed to update Learning Progress:", error);
+
+      // Error message
+      message.error("Failed to update Learning Progress. Please try again.");
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
+
   return (
     <Modal
       title={
