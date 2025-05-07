@@ -284,4 +284,33 @@ const SkillShareCard = ({ plan }) => {
           </Row>
         </div>
       </Card>
-   
+
+      <Modal
+        visible={previewVisible}
+        title="Media Preview"
+        footer={null}
+        onCancel={() => setPreviewVisible(false)}
+        width={800}
+        centered
+        bodyStyle={{ padding: 0 }}
+      >
+        {previewMedia.type === "image" ? (
+          <img
+            alt="Preview"
+            src={previewMedia.url}
+            style={{ width: "100%" }}
+          />
+        ) : (
+          <video
+            src={previewMedia.url}
+            controls
+            style={{ width: "100%" }}
+            autoPlay
+          />
+        )}
+      </Modal>
+    </>
+  );
+};
+
+export default SkillShareCard;
