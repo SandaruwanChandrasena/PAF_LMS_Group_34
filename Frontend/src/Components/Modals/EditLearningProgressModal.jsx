@@ -24,23 +24,23 @@ const themeColors = {
   gradient: "linear-gradient(135deg, #FF6B35 0%, #FF8F1C 100%)", // Light, engaging orange gradient
 };
 
-// const EditLearningProgressModal = () => {
-//   const snap = useSnapshot(state);
-//   const selectedPlan = snap.selectedLearningProgress;
-//   const [updateLoading, setUpdateLoading] = useState(false);
-//   const [form] = Form.useForm();
+const EditLearningProgressModal = () => {
+  const snap = useSnapshot(state);
+  const selectedPlan = snap.selectedLearningProgress;
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [form] = Form.useForm();
 
-//   // Reset form fields when selected plan changes
-//   useEffect(() => {
-//     if (selectedPlan && form) {
-//       form.setFieldsValue({
-//         planName: selectedPlan.planName,
-//         description: selectedPlan.description,
-//         routines: selectedPlan.routines,
-//         goal: selectedPlan.goal,
-//       });
-//     }
-//   }, [selectedPlan, form]);
+  // Reset form fields when selected plan changes
+  useEffect(() => {
+    if (selectedPlan && form) {
+      form.setFieldsValue({
+        planName: selectedPlan.planName,
+        description: selectedPlan.description,
+        routines: selectedPlan.routines,
+        goal: selectedPlan.goal,
+      });
+    }
+  }, [selectedPlan, form]);
 
   const updateLearningProgress = async (values) => {
     try {
