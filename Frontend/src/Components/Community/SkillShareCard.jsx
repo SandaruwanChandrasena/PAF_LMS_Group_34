@@ -58,3 +58,58 @@ const SkillShareCard = ({ plan }) => {
     setPreviewVisible(true);
   };
  
+  const renderMediaItem = (url, type, index) => {
+    return type === "image" ? (
+      <div key={index} className="media-container" onClick={() => handlePreview(url, type)}>
+        <img
+          src={url}
+          alt={`Media ${index + 1}`}
+          style={{ 
+            width: "100%", 
+            height: 300, 
+            objectFit: "cover", 
+            borderRadius: 8,
+            cursor: "pointer" 
+          }}
+        />
+        <div className="media-overlay">
+          <ExpandOutlined style={{ fontSize: 24, color: "white" }} />
+        </div>
+        <style jsx>{`
+          .media-container {
+            position: relative;
+            overflow: hidden;
+          }
+          .media-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 123, 255, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+          }
+          .media-container:hover .media-overlay {
+            opacity: 1;
+          }
+        `}</style>
+      </div>
+    ) : (
+      <div key={index} className="media-container">
+        <video
+          src={url}
+          controls
+          style={{ 
+            width: "100%", 
+            height: 300, 
+            objectFit: "cover", 
+            borderRadius: 8 
+          }}
+        />
+      </div>
+    );
+  };
